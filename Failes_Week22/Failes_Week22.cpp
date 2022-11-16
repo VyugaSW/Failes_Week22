@@ -247,24 +247,27 @@ void AutomaticSaveInFile(Employee* arrEm, int size) {
 void FileUnpackingData(Employee* arrEm, int &size) {
     system("cls");
     FILE* out;
+    Employee p;
     char* path = new char[125];
     char* buff = new char[125];
     cout << "Enter file path (Example: \"C:\\Test\\test.txt\"):\n\n";
     gets_s(path, 126);
     if (!fopen_s(&out, path, "r")) {
         arrEm = UpdateArr(arrEm, size);
-        while (!feof(out)) {
-            fscanf_s(out, "%s", arrEm[size - 1].name,sizeof(arrEm[size-1].name));
-            fscanf_s(out, "%s", arrEm[size - 1].surname, sizeof(arrEm[size - 1].surname));
-            fscanf_s(out, "%d", &arrEm[size - 1].age, sizeof(arrEm[size - 1].age));
+        while (!feof(out)) {                        
+            fscanf_s(out, "%s", &p.name,200);                  //Через объект структуры - не вышло
+            fscanf_s(out, "%s", &p.surname,200);               //Через buff - нет
+            fscanf_s(out, "%d", &p.age, sizeof(int));          //И всё ошибка чтения символов
+                                                              //Но задумка такова: в файл информация вноситься
+            strcpy_s(arrEm[size-1].name, 125, p.name);        //Одной структурой, что позволяет через счетчик
+            strcpy_s(arrEm[size-1].surname, 125, p.surname);  //Считать информацию о каждом сотруднике и сохранить её
+            arrEm[size-1].age = p.age;                        //Увеличивая массив на сотрудника функцией UpdateArr
         }
-        cout << arrEm[size - 1].name << endl;       //Превосходно считывает данные с файла
-        cout << arrEm[size - 1].surname << endl;    //Но при их выводе и каких-либо взаимодействиях сбоит
-        cout << arrEm[size - 1].age << endl;        //Фундирую это ошибкой чтении памяти массива
         fclose(out);
         cout << "Load successfully!\n";
-        Sleep(1000);
     }
+    cout << "Press any key to return";
+    _getch();
 }
 
 int main()
